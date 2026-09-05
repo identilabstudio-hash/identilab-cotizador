@@ -401,15 +401,38 @@
     return "mailto:"+to+"?subject="+su+"&body="+bd;
   }
 
+  // Esta página vive en GitHub Pages (estático, sin backend propio), pero el
+  // formulario "cotizador" sigue viviendo en Netlify (identilabstudio.netlify.app),
+  // que sigue sirviendo tráfico aunque sus deploys de producción estén pausados.
+  // Un fetch() normal cruzando de dominio chocaría con CORS; un <form> real
+  // apuntado a un iframe oculto hace la misma petición como navegación clásica,
+  // que los navegadores sí permiten cross-origin sin problema.
+  var NETLIFY_FORM_ENDPOINT = "https://identilabstudio.netlify.app/";
+
   function submitToNetlify(payload){
-    var body = Object.keys(payload).map(function(k){
-      return encodeURIComponent(k)+"="+encodeURIComponent(payload[k]||"");
-    }).join("&");
-    return fetch("/", {
-      method: "POST",
-      headers: {"Content-Type":"application/x-www-form-urlencoded"},
-      body: body
+    var iframe = document.getElementById("netlify-submit-frame");
+    if (!iframe){
+      iframe = document.createElement("iframe");
+      iframe.name = "netlify-submit-frame";
+      iframe.id = "netlify-submit-frame";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    var form = document.createElement("form");
+    form.action = NETLIFY_FORM_ENDPOINT;
+    form.method = "POST";
+    form.target = "netlify-submit-frame";
+    form.style.display = "none";
+    Object.keys(payload).forEach(function(k){
+      var input = document.createElement("input");
+      input.type = "hidden";
+      input.name = k;
+      input.value = payload[k] || "";
+      form.appendChild(input);
     });
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function(){ form.remove(); }, 3000);
   }
 
   var answers = {};
@@ -560,7 +583,9 @@
           piezas: answers.piezas||"", material: answers.material||"", locaciones: answers.locaciones||"",
           cadencia: answers.cadencia||"", fecha: answers.fecha||"", presupuesto: answers.presupuesto||"",
           documento: doc, rango: rango
-        }).catch(function(){ /* si falla el envío, igual mostramos el resultado; el botón manual queda como respaldo */ });
+        });
+        // submitToNetlify no devuelve promesa (es un <form> real vía iframe oculto,
+        // no fetch) — si falla, el botón manual "Mándanoslo tú mismo" queda de respaldo.
 
         goNext();
       });
