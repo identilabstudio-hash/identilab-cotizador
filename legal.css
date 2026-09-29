@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..700&family=Source+Serif+4:opsz,wght@8..60,400..600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root{
+  --ink:#1B1620; --ink-soft:#4A4152; --paper:#FAF6F3; --line:rgba(27,22,32,.14); --magenta:#C8317E;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --ink:#F3ECF6; --ink-soft:#C9BAD3; --paper:#150F1B; --line:rgba(255,255,255,.14); --magenta:#F06AA8; }
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:"Source Serif 4", Georgia, serif; font-size:17px; line-height:1.6;}
+a{color:var(--magenta);}
+.legal{max-width:720px; margin:0 auto; padding:32px 24px 64px;}
+.legal .back{font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft);}
+.legal h1{font-family:"Bricolage Grotesque", sans-serif; font-size:clamp(28px,5vw,40px); line-height:1.1; margin:28px 0 6px;}
+.legal h2{font-family:"Bricolage Grotesque", sans-serif; font-size:20px; margin:34px 0 8px;}
+.legal .updated{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-soft); margin:0 0 20px;}
+.legal p, .legal li{color:var(--ink);}
+.legal ul{padding-left:22px;}
+.legal li{margin-bottom:6px;}
+.legal footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line); font-size:14px; color:var(--ink-soft);}
+.legal footer a{color:var(--ink-soft);}

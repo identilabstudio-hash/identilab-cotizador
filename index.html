@@ -154,6 +154,9 @@
     padding:14px 24px; font-family:"Bricolage Grotesque",sans-serif; font-weight:600; font-size:15px; cursor:pointer;
   }
   .next-btn:disabled{opacity:.35; cursor:not-allowed;}
+  .consent{display:flex; gap:10px; align-items:flex-start; margin:4px 0 16px; font-size:14px; color:var(--ink-soft); cursor:pointer;}
+  .consent input{margin-top:3px; width:18px; height:18px; flex:none; accent-color:var(--magenta);}
+  .consent a{color:var(--ink);}
 
   .result-card{display:grid; gap:18px;}
   .result-row{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:14px 0; border-bottom:1px solid var(--line);}
@@ -215,6 +218,8 @@
 
   footer{padding:40px 0 60px; border-top:1px solid var(--line);}
   footer .mono{font-size:12px; color:var(--ink-soft);}
+  .legal-links{display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:14px; font-size:14px;}
+  .legal-links a{color:var(--ink-soft);}
 
   @media (max-width:640px){
     .hero-shape{width:360px; height:360px; top:-120px; right:-120px;}
@@ -317,6 +322,7 @@
 <footer>
   <div class="wrap">
     <span class="mono">Identilab Studio · Producción audiovisual para empresas · CDMX</span>
+    <nav class="legal-links"><a href="/privacidad.html">Aviso de Privacidad</a><a href="/terminos.html">Términos y Condiciones</a></nav>
   </div>
 </footer>
 
@@ -494,6 +500,7 @@
       body += '<div class="field"><label>Correo</label><input id="inp-correo" type="email" value="'+escapeHtml(answers.correo||"")+'" placeholder="tu@empresa.com" required></div>';
       body += '<div class="field"><label>Empresa (opcional)</label><input id="inp-empresa" type="text" value="'+escapeHtml(answers.empresa||"")+'" placeholder="Tu empresa"></div>';
       body += '<div class="field"><label>Teléfono (opcional)</label><input id="inp-telefono" type="tel" value="'+escapeHtml(answers.telefono||"")+'" placeholder="55 1234 5678"></div>';
+      body += '<label class="consent"><input id="inp-acepto" type="checkbox"'+(answers.acepto?' checked':'')+'><span>He leído y acepto el <a href="/privacidad.html" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="/terminos.html" target="_blank" rel="noopener">Términos y Condiciones</a>.</span></label>';
       body += '<button class="next-btn" id="btn-ver-estimado" disabled>Ver mi estimado</button>';
       body += '<p style="font-size:13px;color:var(--ink-soft);margin-top:10px">Con esto te mandamos tu estimado por correo. Sin spam — solo lo de tu proyecto.</p>';
     } else if (s.type === "result"){
@@ -549,13 +556,17 @@
       var fEmpresa = document.getElementById("inp-empresa");
       var fCorreo = document.getElementById("inp-correo");
       var fTel = document.getElementById("inp-telefono");
+      var fAcepto = document.getElementById("inp-acepto");
       function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
       function checkValid(){
-        // Solo nombre y correo son obligatorios; empresa y teléfono quedan opcionales.
-        var ok = fNombre.value.trim() && validEmail(fCorreo.value.trim());
+        // Nombre, correo y aceptar el aviso de privacidad son obligatorios;
+        // empresa y teléfono quedan opcionales.
+        answers.acepto = fAcepto.checked;
+        var ok = fNombre.value.trim() && validEmail(fCorreo.value.trim()) && fAcepto.checked;
         vB.disabled = !ok;
       }
       [fNombre, fEmpresa, fCorreo, fTel].forEach(function(el){ el.addEventListener("input", checkValid); });
+      fAcepto.addEventListener("change", checkValid);
       checkValid();
 
       vB.addEventListener("click", function(){
